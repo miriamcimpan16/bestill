@@ -257,85 +257,84 @@ export default function WeeksScreen() {
         />
       )}
 
-      <div className="flex-1 flex gap-6 p-4 md:p-6 bg-[#2A1F1C] overflow-hidden flex-col md:flex-row">
-      {/* MOBILE: Lista zilelor ca carduri compacte */}
-      {isMobile ? (
-        <div className="flex-1 flex flex-col space-y-4">
-          {/* Header mobil cu selector și butoane */}
-          <div className="space-y-3">
-            <h2 className="text-2xl text-[#F4EFEA] leading-tight">
-              Săptămâna {mondayDay}–{sundayDay} {monthName}
-            </h2>
-            
-            {/* Selector săptămână full-width */}
-            <input
-              type="date"
-              value={formatDateISO(selectedMonday)}
-              onChange={handleWeekChange}
-              className="w-full min-h-[44px] px-3 bg-[#3d2e28] text-[#F4EFEA] rounded border border-[#F4EFEA]/20 focus:outline-none focus:ring-2 focus:ring-[#7A5363]"
-            />
-            
-            {/* Butoane pe 2 coloane */}
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => handleSave('DRAFT')}
-                disabled={isSaving}
-                className="min-h-[44px] px-4 bg-transparent border border-[#F4EFEA] text-[#F4EFEA] rounded active:bg-[#F4EFEA]/10 transition disabled:opacity-50 uppercase tracking-wider text-xs font-medium"
-              >
-                Ciornă
-              </button>
-              <button
-                onClick={() => handleSave('PUBLISHED')}
-                disabled={isSaving}
-                className="min-h-[44px] px-4 bg-[#F4EFEA] text-[#1E1815] rounded active:bg-[#F4EFEA]/90 transition disabled:opacity-50 uppercase tracking-wider text-xs font-medium"
-              >
-                Publică
-              </button>
+      <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] overflow-hidden flex-col lg:flex-row max-w-full">
+      {/* MOBILE/TABLET: Lista zilelor ca carduri compacte (< 1024px) */}
+      <div className="flex lg:hidden flex-1 flex-col space-y-4 w-full max-w-full">
+        {/* Header mobil cu selector și butoane */}
+        <div className="space-y-3 w-full max-w-full">
+          <h2 className="text-2xl text-[#F4EFEA] leading-tight">
+            Săptămâna {mondayDay}–{sundayDay} {monthName}
+          </h2>
+          
+          {/* Selector săptămână full-width */}
+          <input
+            type="date"
+            value={formatDateISO(selectedMonday)}
+            onChange={handleWeekChange}
+            className="w-full max-w-full min-h-[44px] px-3 bg-[#3d2e28] text-[#F4EFEA] rounded border border-[#F4EFEA]/20 focus:outline-none focus:ring-2 focus:ring-[#7A5363]"
+          />
+          
+          {/* Butoane pe 2 coloane */}
+          <div className="grid grid-cols-2 gap-2 w-full max-w-full">
+            <button
+              onClick={() => handleSave('DRAFT')}
+              disabled={isSaving}
+              className="min-h-[44px] px-4 bg-transparent border border-[#F4EFEA] text-[#F4EFEA] rounded active:bg-[#F4EFEA]/10 transition disabled:opacity-50 uppercase tracking-wider text-xs font-medium"
+            >
+              Ciornă
+            </button>
+            <button
+              onClick={() => handleSave('PUBLISHED')}
+              disabled={isSaving}
+              className="min-h-[44px] px-4 bg-[#F4EFEA] text-[#1E1815] rounded active:bg-[#F4EFEA]/90 transition disabled:opacity-50 uppercase tracking-wider text-xs font-medium"
+            >
+              Publică
+            </button>
+          </div>
+
+          {/* Status */}
+          <p className="text-sm text-[#F4EFEA]/60">
+            {completedDays}/7 zile · {currentStatus === 'PUBLISHED' ? 'publicată' : 'ciornă'}
+          </p>
+
+          {/* Mesaj salvare */}
+          {saveMessage && (
+            <div className="bg-[#7A5363] text-[#F4EFEA] px-4 py-2 rounded text-sm">
+              {saveMessage}
             </div>
-
-            {/* Status */}
-            <p className="text-sm text-[#F4EFEA]/60">
-              {completedDays}/7 zile · {currentStatus === 'PUBLISHED' ? 'publicată' : 'ciornă'}
-            </p>
-
-            {/* Mesaj salvare */}
-            {saveMessage && (
-              <div className="bg-[#7A5363] text-[#F4EFEA] px-4 py-2 rounded text-sm">
-                {saveMessage}
-              </div>
-            )}
-          </div>
-
-          {/* Lista zilelor ca carduri */}
-          <div className="flex-1 overflow-y-auto space-y-2">
-            {days.map((day, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setSelectedDayIndex(index);
-                  setIsMobileDrawerOpen(true);
-                }}
-                className="w-full bg-[#3d2e28] rounded-lg p-4 text-left active:bg-[#7A5363] transition min-h-[80px]"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-[#F4EFEA]">{dayNames[index]}</span>
-                  <span className="text-xs text-[#F4EFEA]/60">Ziua {index + 1}</span>
-                </div>
-                <div className="text-sm text-[#F4EFEA]/70 truncate">
-                  {day.verseReference || <span className="text-[#F4EFEA]/40">Fără referință</span>}
-                </div>
-                <div className="text-sm text-[#F4EFEA]/70 truncate mt-1">
-                  {day.title || <span className="text-[#F4EFEA]/40">Fără titlu</span>}
-                </div>
-              </button>
-            ))}
-          </div>
+          )}
         </div>
-      ) : (
-        /* DESKTOP: Layout original cu tabel și panel lateral */
-        <>
+
+        {/* Lista zilelor ca carduri */}
+        <div className="flex-1 overflow-y-auto space-y-2 w-full max-w-full">
+          {days.map((day, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setSelectedDayIndex(index);
+                setIsMobileDrawerOpen(true);
+              }}
+              className="w-full max-w-full bg-[#3d2e28] rounded-lg p-4 text-left active:bg-[#7A5363] transition min-h-[80px]"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium text-[#F4EFEA]">{dayNames[index]}</span>
+                <span className="text-xs text-[#F4EFEA]/60">Ziua {index + 1}</span>
+              </div>
+              <div className="text-sm text-[#F4EFEA]/70 truncate">
+                {day.verseReference || <span className="text-[#F4EFEA]/40">Fără referință</span>}
+              </div>
+              <div className="text-sm text-[#F4EFEA]/70 truncate mt-1">
+                {day.title || <span className="text-[#F4EFEA]/40">Fără titlu</span>}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* DESKTOP: Layout original cu tabel și panel lateral (>= 1024px) */}
+      <div className="hidden lg:flex lg:flex-1 flex-col w-full max-w-full">
       {/* Coloana centrală - Lista zilelor */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col w-full max-w-full">
         {/* Header cu titlu și butoane - ALINIAT PE ACEEAȘI LINIE */}
         <div className="mb-6">
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -553,8 +552,7 @@ export default function WeeksScreen() {
           </div>
         </div>
       </ResizablePanel>
-      </>
-      )}
+      </div>
       </div>
     </>
   );

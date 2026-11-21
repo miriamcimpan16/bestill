@@ -8,6 +8,13 @@
   box-sizing: border-box;
 }
 
+/* IMPORTANT: Elimină overflow orizontal pe toate dispozitivele */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 /* Cursor personalizat pe html/body și elemente interactive */
 html,
 body {

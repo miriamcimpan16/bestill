@@ -261,17 +261,17 @@ export default function CategoriesScreen() {
         />
       )}
 
-    <div className="flex-1 flex gap-6 p-4 md:p-6 bg-[#2A1F1C] overflow-hidden flex-col md:flex-row">
-      {/* MOBILE: Layout vertical (listă sus, detalii jos) */}
-      {/* DESKTOP: Layout orizontal (listă stânga, detalii dreapta) */}
+    <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] overflow-hidden flex-col lg:flex-row max-w-full">
+      {/* MOBILE/TABLET: Layout vertical (< 1024px) */}
+      {/* DESKTOP: Layout orizontal (>= 1024px) */}
       
       {/* Lista categoriilor */}
-      <div className="flex-1 md:flex-[0.4] flex flex-col">
+      <div className="w-full lg:w-auto lg:flex-[0.4] flex flex-col max-w-full">
         {/* Header */}
-        <div className="mb-4 md:mb-6">
-          <div className="flex items-start justify-between mb-3 flex-col md:flex-row gap-3">
-            <div className="flex-1 w-full">
-              <h2 className="text-2xl md:text-3xl text-[#F4EFEA] mb-2">
+        <div className="mb-4 lg:mb-6 w-full max-w-full">
+          <div className="flex items-start justify-between mb-3 flex-col lg:flex-row gap-3 w-full max-w-full">
+            <div className="flex-1 w-full max-w-full">
+              <h2 className="text-2xl lg:text-3xl text-[#F4EFEA] mb-2">
                 Categorii „Open when..."
               </h2>
               <p className="text-sm text-[#F4EFEA]/60">
@@ -288,7 +288,7 @@ export default function CategoriesScreen() {
                 }
               }}
               disabled={isLoading}
-              className="w-full md:w-auto min-h-[44px] px-6 py-2.5 bg-[#F4EFEA] text-[#1E1815] rounded hover:bg-[#F4EFEA]/90 active:bg-[#F4EFEA]/80 transition disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs font-medium"
+              className="w-full lg:w-auto min-h-[44px] px-6 py-2.5 bg-[#F4EFEA] text-[#1E1815] rounded hover:bg-[#F4EFEA]/90 active:bg-[#F4EFEA]/80 transition disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs font-medium"
             >
               Categorie nouă
             </button>
@@ -303,7 +303,7 @@ export default function CategoriesScreen() {
         </div>
 
         {/* Lista categoriilor */}
-        <div className="flex-1 bg-[#3d2e28] rounded-lg overflow-hidden">
+        <div className="flex-1 bg-[#3d2e28] rounded-lg overflow-hidden w-full max-w-full">
           <div className="h-full overflow-y-auto">
             {categories.length === 0 ? (
               <div className="flex items-center justify-center h-full text-[#F4EFEA]/40">
@@ -313,7 +313,7 @@ export default function CategoriesScreen() {
               categories.map((category) => (
                 <div
                   key={category.id}
-                  className={`px-4 md:px-6 py-4 cursor-pointer transition border-b border-[#F4EFEA]/5 group min-h-[60px] md:min-h-0 ${
+                  className={`px-4 lg:px-6 py-4 cursor-pointer transition border-b border-[#F4EFEA]/5 group min-h-[60px] lg:min-h-0 w-full max-w-full ${
                     selectedCategory?.id === category.id
                       ? 'bg-[#7A5363] hover:bg-[#7A5363]'
                       : 'hover:bg-[#4d3e38] active:bg-[#4d3e38]'
@@ -354,8 +354,8 @@ export default function CategoriesScreen() {
 
       {/* Panoul detalii categorie - responsive */}
       {selectedCategory ? (
-        <div className="w-full md:w-[420px] bg-[#F4EFEA] rounded-lg p-4 md:p-6 overflow-y-auto flex-shrink-0 mt-4 md:mt-0">
-          <div className="flex items-start justify-between mb-1">
+        <div className="w-full lg:w-[420px] bg-[#F4EFEA] rounded-lg p-4 lg:p-6 overflow-y-auto flex-shrink-0 mt-4 lg:mt-0 max-w-full">
+          <div className="flex items-start justify-between mb-1 w-full max-w-full">
             <h3 className="text-2xl text-[#1E1815] flex-1">
               {selectedCategory.title}
             </h3>

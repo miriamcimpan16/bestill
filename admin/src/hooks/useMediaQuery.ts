@@ -18,6 +18,12 @@ export function useMediaQuery(query: string): boolean {
   return matches;
 }
 
+// Mobile/Tablet: < 1024px
 export function useIsMobile() {
-  return useMediaQuery('(max-width: 767px)');
+  return useMediaQuery('(max-width: 1023px)');
+}
+
+// Desktop: >= 1024px
+export function useIsDesktop() {
+  return useMediaQuery('(min-width: 1024px)');
 }
