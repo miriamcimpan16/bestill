@@ -103,7 +103,7 @@ export default function Dashboard() {
       </div>
 
       {/* Conținutul principal */}
-      <div className="flex-1 flex overflow-y-visible lg:overflow-hidden max-w-full">
+      <div className="flex-1 min-w-0 lg:h-screen lg:overflow-hidden">
         {activeTab === 'weeks' ? <WeeksScreen /> : <CategoriesScreen />}
       </div>
     </div>

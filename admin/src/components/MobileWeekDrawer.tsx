@@ -45,7 +45,7 @@ export default function MobileWeekDrawer({
       )}
 
       {/* Full-screen drawer pentru mobile */}
-      <div className="fixed inset-0 bg-[#F4EFEA] z-50 overflow-y-auto pb-24">
+      <div className="fixed inset-0 bg-[#F4EFEA] z-50 overflow-y-auto pb-28">
         {/* Header cu back button */}
         <div className="bg-[#1E1815] px-4 py-3 flex items-center gap-3 border-b border-[#F4EFEA]/10 sticky top-0 z-10">
           <button

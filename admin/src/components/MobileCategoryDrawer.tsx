@@ -34,7 +34,7 @@ export default function MobileCategoryDrawer({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#F4EFEA] p-4 pb-24 lg:hidden">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#F4EFEA] p-4 pb-28 lg:hidden">
       {/* Header cu back button */}
       <div className="flex items-start justify-between mb-6">
         <button
