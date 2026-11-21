@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { OpenWhenCategory } from '../types';
 import { categoryService } from '../services/categoryService';
+import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
 import DeleteCategoryModal from './DeleteCategoryModal';
 
 const DEFAULT_CATEGORIES = [
@@ -25,6 +26,9 @@ export default function CategoriesScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [categoryToDelete, setCategoryToDelete] = useState<OpenWhenCategory | null>(null);
+  const [isLoadingVerse, setIsLoadingVerse] = useState(false);
+  const [verseError, setVerseError] = useState<string | null>(null);
+  const [verseSearchTimeout, setVerseSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     initializeCategories();
@@ -106,6 +110,41 @@ export default function CategoriesScreen() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleVerseLookup = async (reference: string) => {
+    // Curăță timeout-ul anterior
+    if (verseSearchTimeout) {
+      clearTimeout(verseSearchTimeout);
+    }
+    
+    // Resetează starea
+    setVerseError(null);
+    
+    // Verifică dacă referința are format valid complet (ex: "Proverbe 3:5")
+    if (!isValidReference(reference)) {
+      setIsLoadingVerse(false);
+      return; // NU face căutare dacă formatul nu e complet
+    }
+    
+    setIsLoadingVerse(true);
+    
+    // Programează căutarea după 800ms (debounce)
+    const timeout = setTimeout(async () => {
+      const result = await fetchBibleVerse(reference);
+      
+      if (result) {
+        // Actualizează DOAR textul versetului, NU referința!
+        setNewVerseText(result.text);
+        setVerseError(null);
+      } else {
+        setVerseError('Referință negăsită — poți scrie textul manual');
+      }
+      
+      setIsLoadingVerse(false);
+    }, 800); // Debounce 800ms
+    
+    setVerseSearchTimeout(timeout);
   };
 
   const handleAddVerse = async () => {
@@ -397,20 +436,47 @@ export default function CategoriesScreen() {
           </div>
 
           <div className="border-t border-[#1E1815]/20 pt-6">
-            <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 mb-3 font-medium">
-              Verset nou · Referință
-            </label>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
+                Verset nou · Referință
+              </label>
+              {isLoadingVerse && (
+                <span className="text-xs text-[#7A5363] flex items-center gap-1">
+                  <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                  </svg>
+                  Caut versetul...
+                </span>
+              )}
+            </div>
             <input
               type="text"
               value={newVerseRef}
-              onChange={(e) => setNewVerseRef(e.target.value)}
+              onChange={(e) => {
+                setNewVerseRef(e.target.value);
+                // Apelează handleVerseLookup mereu - funcția va verifica validitatea
+                handleVerseLookup(e.target.value);
+              }}
               placeholder="de ex. Isaia 40:31"
               className="w-full px-4 py-2.5 mb-4 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent"
             />
 
-            <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 mb-3 font-medium">
-              Textul versetului
-            </label>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
+                Textul versetului
+              </label>
+              {verseError && (
+                <span className="text-xs text-[#1E1815]/60">
+                  {verseError}
+                </span>
+              )}
+              {!verseError && !isLoadingVerse && newVerseText && newVerseRef && (
+                <span className="text-xs text-green-600">
+                  ✓ Verset preluat automat
+                </span>
+              )}
+            </div>
             <textarea
               value={newVerseText}
               onChange={(e) => setNewVerseText(e.target.value)}
