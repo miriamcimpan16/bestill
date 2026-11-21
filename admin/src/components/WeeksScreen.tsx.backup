@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Day, DayStatus } from '../types';
 import { weekService } from '../services/weekService';
-import { getMondayOfWeek, getSundayOfWeek, formatDateISO, generateWeekDays, formatDateRO, formatDateROWithMonth } from '../utils/dateUtils';
+import { getMondayOfWeek, getSundayOfWeek, formatDateISO, generateWeekDays, formatDateRO } from '../utils/dateUtils';
+import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
 import ResizablePanel from './ResizablePanel';
 import DevotionalEditor from './DevotionalEditor';
+
+// Helper pentru a extrage text curat din HTML
+const stripHtml = (html: string): string => {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
 
 export default function WeeksScreen() {
   const [selectedMonday, setSelectedMonday] = useState<Date>(() => getMondayOfWeek(new Date()));
@@ -14,6 +22,10 @@ export default function WeeksScreen() {
   const [saveMessage, setSaveMessage] = useState('');
   const [currentStatus, setCurrentStatus] = useState<DayStatus>('DRAFT');
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isLoadingVerse, setIsLoadingVerse] = useState(false);
+  const [verseError, setVerseError] = useState<string | null>(null);
+  const [verseSearchTimeout, setVerseSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // Inițializează zilele pentru săptămâna selectată
   useEffect(() => {
@@ -74,6 +86,53 @@ export default function WeeksScreen() {
       [field]: value
     };
     setDays(updatedDays);
+    
+    // Dacă se schimbă referința versetului, verifică validitatea și caută automat textul
+    if (field === 'verseReference') {
+      handleVerseLookup(value, index);
+    }
+  };
+
+  const handleVerseLookup = async (reference: string, dayIndex: number) => {
+    // Curăță timeout-ul anterior
+    if (verseSearchTimeout) {
+      clearTimeout(verseSearchTimeout);
+    }
+    
+    // Resetează starea
+    setVerseError(null);
+    
+    // Verifică dacă referința are format valid complet (ex: "Proverbe 3:5")
+    if (!isValidReference(reference)) {
+      setIsLoadingVerse(false);
+      return; // NU face căutare dacă formatul nu e complet
+    }
+    
+    setIsLoadingVerse(true);
+    
+    // Programează căutarea după 800ms (debounce)
+    const timeout = setTimeout(async () => {
+      const result = await fetchBibleVerse(reference);
+      
+      if (result) {
+        // Actualizează DOAR textul versetului folosind forma funcțională (evită stale closure)
+        setDays(prevDays => {
+          const updatedDays = [...prevDays];
+          updatedDays[dayIndex] = {
+            ...updatedDays[dayIndex],
+            verseText: result.text // Actualizează DOAR verseText, păstrând verseReference intact
+          };
+          return updatedDays;
+        });
+        setVerseError(null);
+      } else {
+        setVerseError('Referință negăsită — poți scrie textul manual');
+      }
+      
+      setIsLoadingVerse(false);
+    }, 800); // Debounce 800ms
+    
+    setVerseSearchTimeout(timeout);
   };
 
   const handleDragStart = (index: number) => {
@@ -156,7 +215,8 @@ export default function WeeksScreen() {
 
   // Contor de cuvinte și timp de citire pentru devoțional
   const getWordCount = (text: string) => {
-    return text.trim() ? text.trim().split(/\s+/).length : 0;
+    const plainText = stripHtml(text); // Extrage text curat din HTML
+    return plainText.trim() ? plainText.trim().split(/\s+/).length : 0;
   };
 
   const getReadingTime = (wordCount: number) => {
@@ -233,7 +293,7 @@ export default function WeeksScreen() {
         {/* Tabel cu zilele */}
         <div className="flex-1 bg-[#3d2e28] rounded-lg overflow-hidden flex flex-col">
           {/* Header tabel */}
-          <div className="grid grid-cols-[auto_1fr_2fr] gap-4 px-6 py-3 bg-[#2A1F1C] border-b border-[#F4EFEA]/10">
+          <div className="grid grid-cols-[140px_180px_1fr] items-center gap-4 px-5 py-3 bg-[#2A1F1C] border-b border-[#F4EFEA]/10">
             <div className="text-xs uppercase tracking-wider text-[#F4EFEA]/60 font-medium">
               Ziua
             </div>
@@ -255,7 +315,7 @@ export default function WeeksScreen() {
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
                 onClick={() => setSelectedDayIndex(index)}
-                className={`grid grid-cols-[auto_1fr_2fr] gap-4 px-6 py-4 cursor-pointer transition border-b border-[#F4EFEA]/5 ${
+                className={`grid grid-cols-[140px_180px_1fr] items-center gap-4 px-5 py-4 cursor-pointer transition border-b border-[#F4EFEA]/5 ${
                   draggedIndex === index ? 'opacity-50' : ''
                 } ${
                   selectedDayIndex === index 
@@ -265,7 +325,7 @@ export default function WeeksScreen() {
               >
                 <div className="flex items-center gap-3 text-[#F4EFEA]">
                   <span className="text-lg cursor-grab active:cursor-grabbing">≡</span>
-                  <span className="font-medium whitespace-nowrap">{dayNames[index]}</span>
+                  <span className="font-medium">{dayNames[index]}</span>
                 </div>
                 <div className="text-[#F4EFEA] text-sm truncate">
                   {day.verseReference || <span className="text-[#F4EFEA]/40">Referință</span>}
@@ -290,9 +350,20 @@ export default function WeeksScreen() {
         
         <div className="space-y-5">
           <div>
-            <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 mb-2 font-medium">
-              Referință
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
+                Referință
+              </label>
+              {isLoadingVerse && (
+                <span className="text-xs text-[#7A5363] flex items-center gap-1">
+                  <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                  </svg>
+                  Caut versetul...
+                </span>
+              )}
+            </div>
             <input
               type="text"
               value={days[selectedDayIndex]?.verseReference || ''}
@@ -303,9 +374,21 @@ export default function WeeksScreen() {
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 mb-2 font-medium">
-              Textul versetului
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
+                Textul versetului
+              </label>
+              {verseError && (
+                <span className="text-xs text-[#1E1815]/60">
+                  {verseError}
+                </span>
+              )}
+              {!verseError && !isLoadingVerse && days[selectedDayIndex]?.verseText && days[selectedDayIndex]?.verseReference && (
+                <span className="text-xs text-green-600">
+                  ✓ Verset preluat automat
+                </span>
+              )}
+            </div>
             <textarea
               value={days[selectedDayIndex]?.verseText || ''}
               onChange={(e) => handleDayChange(selectedDayIndex, 'verseText', e.target.value)}
@@ -345,11 +428,13 @@ export default function WeeksScreen() {
               </button>
             </div>
             <textarea
-              value={days[selectedDayIndex]?.content || ''}
+              value={stripHtml(days[selectedDayIndex]?.content || '')}
               onChange={(e) => handleDayChange(selectedDayIndex, 'content', e.target.value)}
               placeholder="Un păstor își cunoaște oile pe nume și știe de ce are nevoie fiecare."
               rows={8}
               className="w-full min-h-[200px] px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-y leading-relaxed"
+              readOnly
+              title="Click pe 'Extinde' pentru a edita conținutul"
             />
             <div className="flex justify-end mt-1">
               <p className="text-xs text-[#1E1815]/50">

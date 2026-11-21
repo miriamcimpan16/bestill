@@ -498,7 +498,7 @@ export default function CategoriesScreen() {
           </div>
         </div>
       ) : (
-        <div className="w-[420px] bg-[#F4EFEA] rounded-lg p-6 flex items-center justify-center flex-shrink-0">
+        <div className="w-full lg:w-[420px] max-w-full bg-[#F4EFEA] rounded-lg p-6 flex items-center justify-center flex-shrink-0 mt-4 lg:mt-0">
           <div className="text-[#1E1815]/40 text-center">
             <p className="text-lg mb-2">Selectează o categorie</p>
             <p className="text-sm">sau creează una nouă</p>

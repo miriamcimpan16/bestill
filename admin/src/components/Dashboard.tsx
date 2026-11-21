@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { TabView } from '../types';
 import { useAuth } from '../hooks/useAuth';
-import { useIsMobile } from '../hooks/useMediaQuery';
 import WeeksScreen from './WeeksScreen';
 import CategoriesScreen from './CategoriesScreen';
 
