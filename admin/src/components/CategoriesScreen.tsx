@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { OpenWhenCategory } from '../types';
 import { categoryService } from '../services/categoryService';
 import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
-import { useIsMobile } from '../hooks/useMediaQuery';
 import DeleteCategoryModal from './DeleteCategoryModal';
 
 const DEFAULT_CATEGORIES = [
@@ -30,7 +29,6 @@ export default function CategoriesScreen() {
   const [isLoadingVerse, setIsLoadingVerse] = useState(false);
   const [verseError, setVerseError] = useState<string | null>(null);
   const [verseSearchTimeout, setVerseSearchTimeout] = useState<NodeJS.Timeout | null>(null);
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     initializeCategories();

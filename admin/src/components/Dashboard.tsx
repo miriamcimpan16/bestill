@@ -8,7 +8,6 @@ import CategoriesScreen from './CategoriesScreen';
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabView>('weeks');
   const { signOut } = useAuth();
-  const isMobile = useIsMobile();
 
   const handleSignOut = async () => {
     if (confirm('Ești sigur că vrei să te deconectezi?')) {
