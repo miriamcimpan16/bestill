@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Day, DayStatus } from '../types';
 import { weekService } from '../services/weekService';
 import { getMondayOfWeek, getSundayOfWeek, formatDateISO, generateWeekDays, formatDateRO } from '../utils/dateUtils';
+import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
 import ResizablePanel from './ResizablePanel';
 import DevotionalEditor from './DevotionalEditor';
 
@@ -21,6 +22,9 @@ export default function WeeksScreen() {
   const [saveMessage, setSaveMessage] = useState('');
   const [currentStatus, setCurrentStatus] = useState<DayStatus>('DRAFT');
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isLoadingVerse, setIsLoadingVerse] = useState(false);
+  const [verseError, setVerseError] = useState<string | null>(null);
+  const [verseSearchTimeout, setVerseSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Inițializează zilele pentru săptămâna selectată
   useEffect(() => {
@@ -81,6 +85,53 @@ export default function WeeksScreen() {
       [field]: value
     };
     setDays(updatedDays);
+    
+    // Dacă se schimbă referința versetului, verifică validitatea și caută automat textul
+    if (field === 'verseReference') {
+      handleVerseLookup(value, index);
+    }
+  };
+
+  const handleVerseLookup = async (reference: string, dayIndex: number) => {
+    // Curăță timeout-ul anterior
+    if (verseSearchTimeout) {
+      clearTimeout(verseSearchTimeout);
+    }
+    
+    // Resetează starea
+    setVerseError(null);
+    
+    // Verifică dacă referința are format valid complet (ex: "Proverbe 3:5")
+    if (!isValidReference(reference)) {
+      setIsLoadingVerse(false);
+      return; // NU face căutare dacă formatul nu e complet
+    }
+    
+    setIsLoadingVerse(true);
+    
+    // Programează căutarea după 800ms (debounce)
+    const timeout = setTimeout(async () => {
+      const result = await fetchBibleVerse(reference);
+      
+      if (result) {
+        // Actualizează DOAR textul versetului folosind forma funcțională (evită stale closure)
+        setDays(prevDays => {
+          const updatedDays = [...prevDays];
+          updatedDays[dayIndex] = {
+            ...updatedDays[dayIndex],
+            verseText: result.text // Actualizează DOAR verseText, păstrând verseReference intact
+          };
+          return updatedDays;
+        });
+        setVerseError(null);
+      } else {
+        setVerseError('Referință negăsită — poți scrie textul manual');
+      }
+      
+      setIsLoadingVerse(false);
+    }, 800); // Debounce 800ms
+    
+    setVerseSearchTimeout(timeout);
   };
 
   const handleDragStart = (index: number) => {
@@ -298,9 +349,20 @@ export default function WeeksScreen() {
         
         <div className="space-y-5">
           <div>
-            <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 mb-2 font-medium">
-              Referință
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
+                Referință
+              </label>
+              {isLoadingVerse && (
+                <span className="text-xs text-[#7A5363] flex items-center gap-1">
+                  <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                  </svg>
+                  Caut versetul...
+                </span>
+              )}
+            </div>
             <input
               type="text"
               value={days[selectedDayIndex]?.verseReference || ''}
@@ -311,9 +373,21 @@ export default function WeeksScreen() {
           </div>
 
           <div>
-            <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 mb-2 font-medium">
-              Textul versetului
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
+                Textul versetului
+              </label>
+              {verseError && (
+                <span className="text-xs text-[#1E1815]/60">
+                  {verseError}
+                </span>
+              )}
+              {!verseError && !isLoadingVerse && days[selectedDayIndex]?.verseText && days[selectedDayIndex]?.verseReference && (
+                <span className="text-xs text-green-600">
+                  ✓ Verset preluat automat
+                </span>
+              )}
+            </div>
             <textarea
               value={days[selectedDayIndex]?.verseText || ''}
               onChange={(e) => handleDayChange(selectedDayIndex, 'verseText', e.target.value)}
