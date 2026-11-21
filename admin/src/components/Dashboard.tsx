@@ -1,0 +1,70 @@
+import { useState } from 'react';
+import { TabView } from '../types';
+import { useAuth } from '../hooks/useAuth';
+import WeeksScreen from './WeeksScreen';
+import CategoriesScreen from './CategoriesScreen';
+
+export default function Dashboard() {
+  const [activeTab, setActiveTab] = useState<TabView>('weeks');
+  const { signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    if (confirm('Ești sigur că vrei să te deconectezi?')) {
+      await signOut();
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-[#1E1815]">
+      {/* Sidebar fix în stânga */}
+      <div className="w-[220px] bg-[#1E1815] flex flex-col border-r border-[#F4EFEA]/10 flex-shrink-0">
+        <div className="p-6 border-b border-[#F4EFEA]/10">
+          <h1 className="text-4xl text-[#F4EFEA] mb-1" style={{ fontFamily: '"MonteCarlo", cursive', fontWeight: 500 }}>
+            Be Still
+          </h1>
+          <p className="text-xs text-[#F4EFEA]/60 uppercase tracking-wider">
+            Administrare
+          </p>
+        </div>
+
+        <nav className="flex-1 p-4">
+          <button
+            onClick={() => setActiveTab('weeks')}
+            className={`w-full text-left px-4 py-3 rounded mb-2 transition font-medium ${
+              activeTab === 'weeks'
+                ? 'bg-[#F4EFEA] text-[#1E1815]'
+                : 'text-[#F4EFEA] hover:bg-[#F4EFEA]/10'
+            }`}
+          >
+            Săptămâni
+          </button>
+
+          <button
+            onClick={() => setActiveTab('categories')}
+            className={`w-full text-left px-4 py-3 rounded mb-2 transition font-medium ${
+              activeTab === 'categories'
+                ? 'bg-[#F4EFEA] text-[#1E1815]'
+                : 'text-[#F4EFEA] hover:bg-[#F4EFEA]/10'
+            }`}
+          >
+            Categorii
+          </button>
+        </nav>
+
+        <div className="p-4 border-t border-[#F4EFEA]/10">
+          <button
+            onClick={handleSignOut}
+            className="w-full px-4 py-2 text-[#F4EFEA] hover:bg-[#F4EFEA]/10 rounded transition text-sm"
+          >
+            Deconectare
+          </button>
+        </div>
+      </div>
+
+      {/* Conținutul principal */}
+      <div className="flex-1 flex overflow-hidden">
+        {activeTab === 'weeks' ? <WeeksScreen /> : <CategoriesScreen />}
+      </div>
+    </div>
+  );
+}
