@@ -28,6 +28,18 @@ a,
   cursor: url('/mouse.png') 7 2, pointer;
 }
 
+/* Dezactivează cursor custom pe dispozitive touch pentru a nu interfere */
+@media (pointer: coarse) {
+  html,
+  body,
+  button,
+  a,
+  [role="button"],
+  .cursor-pointer {
+    cursor: auto !important;
+  }
+}
+
 /* Cursor standard pentru editare text - precizie maximă */
 input,
 textarea,
@@ -119,8 +131,12 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.8 !important;
   padding: 2.5rem !important;
   color: #1E1815 !important;
-  min-height: 100%;
+  min-height: 220px;
+  width: 100%;
   outline: none;
+  touch-action: manipulation;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Spacing natural între paragrafe */

@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { OpenWhenCategory } from '../types';
 import { categoryService } from '../services/categoryService';
 import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
+import { useIsMobile } from '../hooks/useMediaQuery';
 import DeleteCategoryModal from './DeleteCategoryModal';
+import MobileCategoryDrawer from './MobileCategoryDrawer';
 
 const DEFAULT_CATEGORIES = [
   'Open when you failed an exam.',
@@ -29,6 +31,8 @@ export default function CategoriesScreen() {
   const [isLoadingVerse, setIsLoadingVerse] = useState(false);
   const [verseError, setVerseError] = useState<string | null>(null);
   const [verseSearchTimeout, setVerseSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     initializeCategories();
@@ -246,6 +250,14 @@ export default function CategoriesScreen() {
 
   const handleCategoryClick = (category: OpenWhenCategory) => {
     setSelectedCategory(category);
+    if (isMobile) {
+      setIsMobileDrawerOpen(true);
+    }
+  };
+
+  const handleVerseLookupMobile = (reference: string) => {
+    setNewVerseRef(reference);
+    handleVerseLookup(reference);
   };
 
   return (
@@ -256,6 +268,25 @@ export default function CategoriesScreen() {
           categoryTitle={categoryToDelete.title}
           onConfirm={confirmDeleteCategory}
           onCancel={() => setCategoryToDelete(null)}
+        />
+      )}
+
+      {/* Mobile Drawer pentru editare categorie */}
+      {isMobile && selectedCategory && (
+        <MobileCategoryDrawer
+          category={selectedCategory}
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          onDeleteCategory={handleDeleteCategory}
+          onDeleteVerse={handleDeleteVerse}
+          onAddVerse={handleAddVerse}
+          newVerseRef={newVerseRef}
+          setNewVerseRef={handleVerseLookupMobile}
+          newVerseText={newVerseText}
+          setNewVerseText={setNewVerseText}
+          isLoadingVerse={isLoadingVerse}
+          verseError={verseError}
+          isLoading={isLoading}
         />
       )}
 
@@ -350,9 +381,9 @@ export default function CategoriesScreen() {
         </div>
       </div>
 
-      {/* Panoul detalii categorie - responsive */}
+      {/* Panoul detalii categorie - DOAR DESKTOP (>= 1024px) */}
       {selectedCategory ? (
-        <div className="w-full lg:w-[420px] bg-[#F4EFEA] rounded-lg p-4 lg:p-6 overflow-y-auto flex-shrink-0 mt-4 lg:mt-0 max-w-full">
+        <div className="hidden lg:block w-full lg:w-[420px] bg-[#F4EFEA] rounded-lg p-4 lg:p-6 overflow-y-auto flex-shrink-0 mt-4 lg:mt-0 max-w-full">
           <div className="flex items-start justify-between mb-1 w-full max-w-full">
             <h3 className="text-2xl text-[#1E1815] flex-1">
               {selectedCategory.title}
@@ -498,7 +529,7 @@ export default function CategoriesScreen() {
           </div>
         </div>
       ) : (
-        <div className="w-full lg:w-[420px] max-w-full bg-[#F4EFEA] rounded-lg p-6 flex items-center justify-center flex-shrink-0 mt-4 lg:mt-0">
+        <div className="hidden lg:flex w-full lg:w-[420px] max-w-full bg-[#F4EFEA] rounded-lg p-6 items-center justify-center flex-shrink-0 mt-4 lg:mt-0">
           <div className="text-[#1E1815]/40 text-center">
             <p className="text-lg mb-2">Selectează o categorie</p>
             <p className="text-sm">sau creează una nouă</p>

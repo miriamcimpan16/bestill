@@ -16,6 +16,7 @@ interface DevotionalEditorProps {
 
 export default function DevotionalEditor({ value, onChange, onClose }: DevotionalEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const editorContainerRef = useRef<HTMLDivElement>(null);
   const [currentContent, setCurrentContent] = useState(value);
 
   const editor = useEditor({
@@ -46,6 +47,13 @@ export default function DevotionalEditor({ value, onChange, onClose }: Devotiona
       setCurrentContent(editor.getHTML());
     },
   });
+
+  // Click pe container deschide tastatura pe mobil
+  const handleContainerClick = () => {
+    if (editor && !editor.isFocused) {
+      editor.chain().focus().run();
+    }
+  };
 
   useEffect(() => {
     return () => {
@@ -117,8 +125,57 @@ export default function DevotionalEditor({ value, onChange, onClose }: Devotiona
           </button>
         </div>
 
-        {/* Toolbar */}
-        <div className="flex items-center gap-1.5 px-6 py-3 border-b border-[#1E1815]/10 bg-[#F4EFEA]/50 flex-shrink-0 flex-wrap">
+        {/* Toolbar - Simplu pe mobil, complet pe desktop */}
+        <div className="flex items-center gap-1 lg:gap-1.5 px-4 lg:px-6 py-3 border-b border-[#1E1815]/10 bg-[#F4EFEA]/50 flex-shrink-0 flex-wrap overflow-x-auto">
+          {/* Mobile: doar esențialele */}
+          <div className="flex lg:hidden items-center gap-1 flex-wrap">
+            {/* Bold, Italic, List */}
+            <button
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={`min-h-[40px] min-w-[40px] p-2 rounded hover:bg-[#1E1815]/10 active:bg-[#1E1815]/20 transition ${
+                editor.isActive('bold') ? 'bg-[#1E1815]/20' : ''
+              }`}
+              title="Bold"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6zM6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>
+              </svg>
+            </button>
+
+            <button
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className={`min-h-[40px] min-w-[40px] p-2 rounded hover:bg-[#1E1815]/10 active:bg-[#1E1815]/20 transition ${
+                editor.isActive('italic') ? 'bg-[#1E1815]/20' : ''
+              }`}
+              title="Italic"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="19" y1="4" x2="10" y2="4"/>
+                <line x1="14" y1="20" x2="5" y2="20"/>
+                <line x1="15" y1="4" x2="9" y2="20"/>
+              </svg>
+            </button>
+
+            <button
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={`min-h-[40px] min-w-[40px] p-2 rounded hover:bg-[#1E1815]/10 active:bg-[#1E1815]/20 transition ${
+                editor.isActive('bulletList') ? 'bg-[#1E1815]/20' : ''
+              }`}
+              title="Listă"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="8" y1="6" x2="21" y2="6"/>
+                <line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <circle cx="4" cy="6" r="1" fill="currentColor"/>
+                <circle cx="4" cy="12" r="1" fill="currentColor"/>
+                <circle cx="4" cy="18" r="1" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Desktop: toolbar complet */}
+          <div className="hidden lg:flex items-center gap-1.5 flex-wrap">
           {/* Undo / Redo */}
           <button
             onClick={() => editor.chain().focus().undo().run()}
@@ -315,7 +372,7 @@ export default function DevotionalEditor({ value, onChange, onClose }: Devotiona
 
           <div className="flex-1" />
 
-          {/* Import Word button */}
+          {/* Import Word button - doar desktop */}
           <input
             ref={fileInputRef}
             type="file"
@@ -325,7 +382,7 @@ export default function DevotionalEditor({ value, onChange, onClose }: Devotiona
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2 bg-[#1E1815] text-[#F4EFEA] rounded hover:bg-[#2A1F1C] transition text-xs font-medium uppercase tracking-wider flex items-center gap-2"
+            className="hidden lg:flex px-4 py-2 bg-[#1E1815] text-[#F4EFEA] rounded hover:bg-[#2A1F1C] transition text-xs font-medium uppercase tracking-wider items-center gap-2"
             title="Importă din Word (.docx)"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -333,10 +390,15 @@ export default function DevotionalEditor({ value, onChange, onClose }: Devotiona
             </svg>
             Importă din Word
           </button>
+          </div>
         </div>
 
-        {/* Editor - ca o foaie Word */}
-        <div className="flex-1 overflow-y-auto bg-gradient-to-b from-[#E8E3DD] to-[#F4EFEA] p-8">
+        {/* Editor - ca o foaie Word, cu click handler pentru focus mobil */}
+        <div 
+          ref={editorContainerRef}
+          onClick={handleContainerClick}
+          className="flex-1 overflow-y-auto bg-gradient-to-b from-[#E8E3DD] to-[#F4EFEA] p-4 lg:p-8"
+        >
           <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-sm min-h-full">
             <EditorContent editor={editor} />
           </div>
