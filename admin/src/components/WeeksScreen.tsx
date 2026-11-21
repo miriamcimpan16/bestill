@@ -3,8 +3,10 @@ import { Day, DayStatus } from '../types';
 import { weekService } from '../services/weekService';
 import { getMondayOfWeek, getSundayOfWeek, formatDateISO, generateWeekDays, formatDateRO } from '../utils/dateUtils';
 import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
+import { useIsMobile } from '../hooks/useMediaQuery';
 import ResizablePanel from './ResizablePanel';
 import DevotionalEditor from './DevotionalEditor';
+import MobileWeekDrawer from './MobileWeekDrawer';
 
 // Helper pentru a extrage text curat din HTML
 const stripHtml = (html: string): string => {
@@ -25,6 +27,8 @@ export default function WeeksScreen() {
   const [isLoadingVerse, setIsLoadingVerse] = useState(false);
   const [verseError, setVerseError] = useState<string | null>(null);
   const [verseSearchTimeout, setVerseSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   // Inițializează zilele pentru săptămâna selectată
   useEffect(() => {
@@ -227,8 +231,25 @@ export default function WeeksScreen() {
 
   return (
     <>
-      {/* Modal Editor */}
-      {isEditorOpen && (
+      {/* Mobile Drawer pentru editare zi */}
+      {isMobile && (
+        <MobileWeekDrawer
+          day={days[selectedDayIndex] || {} as Day}
+          dayIndex={selectedDayIndex}
+          dayName={dayNames[selectedDayIndex]}
+          dayDate={formatDateRO(days[selectedDayIndex]?.date || formatDateISO(selectedMonday))}
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          onChange={handleDayChange}
+          isLoadingVerse={isLoadingVerse}
+          verseError={verseError}
+          wordCount={devotionalWordCount}
+          readingTime={devotionalReadingTime}
+        />
+      )}
+
+      {/* Modal Editor Desktop */}
+      {!isMobile && isEditorOpen && (
         <DevotionalEditor
           value={days[selectedDayIndex]?.content || ''}
           onChange={(value) => handleDayChange(selectedDayIndex, 'content', value)}
@@ -236,7 +257,83 @@ export default function WeeksScreen() {
         />
       )}
 
-      <div className="flex-1 flex gap-6 p-6 bg-[#2A1F1C] overflow-hidden">
+      <div className="flex-1 flex gap-6 p-4 md:p-6 bg-[#2A1F1C] overflow-hidden flex-col md:flex-row">
+      {/* MOBILE: Lista zilelor ca carduri compacte */}
+      {isMobile ? (
+        <div className="flex-1 flex flex-col space-y-4">
+          {/* Header mobil cu selector și butoane */}
+          <div className="space-y-3">
+            <h2 className="text-2xl text-[#F4EFEA] leading-tight">
+              Săptămâna {mondayDay}–{sundayDay} {monthName}
+            </h2>
+            
+            {/* Selector săptămână full-width */}
+            <input
+              type="date"
+              value={formatDateISO(selectedMonday)}
+              onChange={handleWeekChange}
+              className="w-full min-h-[44px] px-3 bg-[#3d2e28] text-[#F4EFEA] rounded border border-[#F4EFEA]/20 focus:outline-none focus:ring-2 focus:ring-[#7A5363]"
+            />
+            
+            {/* Butoane pe 2 coloane */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => handleSave('DRAFT')}
+                disabled={isSaving}
+                className="min-h-[44px] px-4 bg-transparent border border-[#F4EFEA] text-[#F4EFEA] rounded active:bg-[#F4EFEA]/10 transition disabled:opacity-50 uppercase tracking-wider text-xs font-medium"
+              >
+                Ciornă
+              </button>
+              <button
+                onClick={() => handleSave('PUBLISHED')}
+                disabled={isSaving}
+                className="min-h-[44px] px-4 bg-[#F4EFEA] text-[#1E1815] rounded active:bg-[#F4EFEA]/90 transition disabled:opacity-50 uppercase tracking-wider text-xs font-medium"
+              >
+                Publică
+              </button>
+            </div>
+
+            {/* Status */}
+            <p className="text-sm text-[#F4EFEA]/60">
+              {completedDays}/7 zile · {currentStatus === 'PUBLISHED' ? 'publicată' : 'ciornă'}
+            </p>
+
+            {/* Mesaj salvare */}
+            {saveMessage && (
+              <div className="bg-[#7A5363] text-[#F4EFEA] px-4 py-2 rounded text-sm">
+                {saveMessage}
+              </div>
+            )}
+          </div>
+
+          {/* Lista zilelor ca carduri */}
+          <div className="flex-1 overflow-y-auto space-y-2">
+            {days.map((day, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setSelectedDayIndex(index);
+                  setIsMobileDrawerOpen(true);
+                }}
+                className="w-full bg-[#3d2e28] rounded-lg p-4 text-left active:bg-[#7A5363] transition min-h-[80px]"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium text-[#F4EFEA]">{dayNames[index]}</span>
+                  <span className="text-xs text-[#F4EFEA]/60">Ziua {index + 1}</span>
+                </div>
+                <div className="text-sm text-[#F4EFEA]/70 truncate">
+                  {day.verseReference || <span className="text-[#F4EFEA]/40">Fără referință</span>}
+                </div>
+                <div className="text-sm text-[#F4EFEA]/70 truncate mt-1">
+                  {day.title || <span className="text-[#F4EFEA]/40">Fără titlu</span>}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        /* DESKTOP: Layout original cu tabel și panel lateral */
+        <>
       {/* Coloana centrală - Lista zilelor */}
       <div className="flex-1 flex flex-col">
         {/* Header cu titlu și butoane - ALINIAT PE ACEEAȘI LINIE */}
@@ -456,6 +553,8 @@ export default function WeeksScreen() {
           </div>
         </div>
       </ResizablePanel>
+      </>
+      )}
       </div>
     </>
   );

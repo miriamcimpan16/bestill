@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { OpenWhenCategory } from '../types';
 import { categoryService } from '../services/categoryService';
 import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
+import { useIsMobile } from '../hooks/useMediaQuery';
 import DeleteCategoryModal from './DeleteCategoryModal';
 
 const DEFAULT_CATEGORIES = [
@@ -29,6 +30,7 @@ export default function CategoriesScreen() {
   const [isLoadingVerse, setIsLoadingVerse] = useState(false);
   const [verseError, setVerseError] = useState<string | null>(null);
   const [verseSearchTimeout, setVerseSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     initializeCategories();
@@ -259,18 +261,21 @@ export default function CategoriesScreen() {
         />
       )}
 
-    <div className="flex-1 flex gap-6 p-6 bg-[#2A1F1C] overflow-hidden">
-      {/* Coloana centrală - Lista categoriilor */}
-      <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex gap-6 p-4 md:p-6 bg-[#2A1F1C] overflow-hidden flex-col md:flex-row">
+      {/* MOBILE: Layout vertical (listă sus, detalii jos) */}
+      {/* DESKTOP: Layout orizontal (listă stânga, detalii dreapta) */}
+      
+      {/* Lista categoriilor */}
+      <div className="flex-1 md:flex-[0.4] flex flex-col">
         {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex-1">
-              <h2 className="text-3xl text-[#F4EFEA] mb-2">
+        <div className="mb-4 md:mb-6">
+          <div className="flex items-start justify-between mb-3 flex-col md:flex-row gap-3">
+            <div className="flex-1 w-full">
+              <h2 className="text-2xl md:text-3xl text-[#F4EFEA] mb-2">
                 Categorii „Open when..."
               </h2>
               <p className="text-sm text-[#F4EFEA]/60">
-                {categories.length} categorii · aplicația alege un verset la întâmplare din categoria aleasă
+                {categories.length} categorii
               </p>
             </div>
             
@@ -283,7 +288,7 @@ export default function CategoriesScreen() {
                 }
               }}
               disabled={isLoading}
-              className="px-6 py-2.5 bg-[#F4EFEA] text-[#1E1815] rounded hover:bg-[#F4EFEA]/90 transition disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs font-medium"
+              className="w-full md:w-auto min-h-[44px] px-6 py-2.5 bg-[#F4EFEA] text-[#1E1815] rounded hover:bg-[#F4EFEA]/90 active:bg-[#F4EFEA]/80 transition disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs font-medium"
             >
               Categorie nouă
             </button>
@@ -308,10 +313,10 @@ export default function CategoriesScreen() {
               categories.map((category) => (
                 <div
                   key={category.id}
-                  className={`px-6 py-4 cursor-pointer transition border-b border-[#F4EFEA]/5 group ${
+                  className={`px-4 md:px-6 py-4 cursor-pointer transition border-b border-[#F4EFEA]/5 group min-h-[60px] md:min-h-0 ${
                     selectedCategory?.id === category.id
                       ? 'bg-[#7A5363] hover:bg-[#7A5363]'
-                      : 'hover:bg-[#4d3e38]'
+                      : 'hover:bg-[#4d3e38] active:bg-[#4d3e38]'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -323,7 +328,7 @@ export default function CategoriesScreen() {
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="text-[#F4EFEA]/60 text-sm">
-                        {category.verses.length} versete
+                        {category.verses.length} v.
                       </div>
                       <button
                         onClick={(e) => {
@@ -347,9 +352,9 @@ export default function CategoriesScreen() {
         </div>
       </div>
 
-      {/* Coloana dreaptă - Detalii categorie */}
+      {/* Panoul detalii categorie - responsive */}
       {selectedCategory ? (
-        <div className="w-[420px] bg-[#F4EFEA] rounded-lg p-6 overflow-y-auto flex-shrink-0">
+        <div className="w-full md:w-[420px] bg-[#F4EFEA] rounded-lg p-4 md:p-6 overflow-y-auto flex-shrink-0 mt-4 md:mt-0">
           <div className="flex items-start justify-between mb-1">
             <h3 className="text-2xl text-[#1E1815] flex-1">
               {selectedCategory.title}
@@ -488,7 +493,7 @@ export default function CategoriesScreen() {
             <button
               onClick={handleAddVerse}
               disabled={isLoading || !newVerseRef.trim() || !newVerseText.trim()}
-              className="w-full py-3 bg-[#1E1815] text-[#F4EFEA] rounded hover:bg-[#2A1F1C] transition disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs font-medium"
+              className="w-full min-h-[44px] py-3 bg-[#1E1815] text-[#F4EFEA] rounded hover:bg-[#2A1F1C] active:bg-[#2A1F1C] transition disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs font-medium"
             >
               Adaugă versetul
             </button>
