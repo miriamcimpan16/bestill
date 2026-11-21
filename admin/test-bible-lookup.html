@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Bible Lookup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-case {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-case h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .result {
+            background: #f5f5f5;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 3px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Bible Lookup - Local JSON</h1>
+    <p>Testează căutarea versetelor folosind fișierul JSON local <code>ro_cornilescu.json</code></p>
+
+    <div class="test-case">
+        <h3>Test 1: Proverbe 3:5 (un singur verset)</h3>
+        <div class="result" id="test1">Încărcare...</div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test 2: Proverbe 3:5-6 (interval de versete)</h3>
+        <div class="result" id="test2">Încărcare...</div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test 3: Psalmul 23:1 (alt psalm)</h3>
+        <div class="result" id="test3">Încărcare...</div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test 4: Ioan 3:16 (Noul Testament)</h3>
+        <div class="result" id="test4">Încărcare...</div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test 5: Referință invalidă</h3>
+        <div class="result" id="test5">Încărcare...</div>
+    </div>
+
+    <script type="module">
+        import { fetchBibleVerse, isValidReference } from './src/utils/bibleLookup.ts';
+
+        async function runTests() {
+            // Test 1: Proverbe 3:5
+            try {
+                const result1 = await fetchBibleVerse('Proverbe 3:5');
+                if (result1) {
+                    document.getElementById('test1').innerHTML = 
+                        `<span class="success">✅ SUCCES</span><br><strong>Text:</strong> ${result1.text}`;
+                } else {
+                    document.getElementById('test1').innerHTML = 
+                        `<span class="error">❌ EȘUAT</span><br>Nu s-a găsit versetul`;
+                }
+            } catch (error) {
+                document.getElementById('test1').innerHTML = 
+                    `<span class="error">❌ EROARE</span><br>${error.message}`;
+            }
+
+            // Test 2: Proverbe 3:5-6
+            try {
+                const result2 = await fetchBibleVerse('Proverbe 3:5-6');
+                if (result2) {
+                    document.getElementById('test2').innerHTML = 
+                        `<span class="success">✅ SUCCES</span><br><strong>Text:</strong> ${result2.text}`;
+                } else {
+                    document.getElementById('test2').innerHTML = 
+                        `<span class="error">❌ EȘUAT</span><br>Nu s-a găsit intervalul`;
+                }
+            } catch (error) {
+                document.getElementById('test2').innerHTML = 
+                    `<span class="error">❌ EROARE</span><br>${error.message}`;
+            }
+
+            // Test 3: Psalmul 23:1
+            try {
+                const result3 = await fetchBibleVerse('Psalmul 23:1');
+                if (result3) {
+                    document.getElementById('test3').innerHTML = 
+                        `<span class="success">✅ SUCCES</span><br><strong>Text:</strong> ${result3.text}`;
+                } else {
+                    document.getElementById('test3').innerHTML = 
+                        `<span class="error">❌ EȘUAT</span><br>Nu s-a găsit versetul`;
+                }
+            } catch (error) {
+                document.getElementById('test3').innerHTML = 
+                    `<span class="error">❌ EROARE</span><br>${error.message}`;
+            }
+
+            // Test 4: Ioan 3:16
+            try {
+                const result4 = await fetchBibleVerse('Ioan 3:16');
+                if (result4) {
+                    document.getElementById('test4').innerHTML = 
+                        `<span class="success">✅ SUCCES</span><br><strong>Text:</strong> ${result4.text}`;
+                } else {
+                    document.getElementById('test4').innerHTML = 
+                        `<span class="error">❌ EȘUAT</span><br>Nu s-a găsit versetul`;
+                }
+            } catch (error) {
+                document.getElementById('test4').innerHTML = 
+                    `<span class="error">❌ EROARE</span><br>${error.message}`;
+            }
+
+            // Test 5: Referință invalidă
+            const isValid = isValidReference('Invalid Reference');
+            document.getElementById('test5').innerHTML = isValid
+                ? `<span class="error">❌ EȘUAT</span><br>Ar trebui să fie invalidă`
+                : `<span class="success">✅ SUCCES</span><br>Validare corectă: referință invalidă detectată`;
+        }
+
+        runTests();
+    </script>
+</body>
+</html>
