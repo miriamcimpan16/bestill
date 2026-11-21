@@ -290,7 +290,7 @@ export default function CategoriesScreen() {
         />
       )}
 
-    <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] overflow-hidden flex-col lg:flex-row max-w-full">
+    <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] overflow-y-visible lg:overflow-hidden flex-col lg:flex-row max-w-full">
       {/* MOBILE/TABLET: Layout vertical (< 1024px) */}
       {/* DESKTOP: Layout orizontal (>= 1024px) */}
       
@@ -332,7 +332,7 @@ export default function CategoriesScreen() {
         </div>
 
         {/* Lista categoriilor */}
-        <div className="flex-1 bg-[#3d2e28] rounded-lg overflow-hidden w-full max-w-full">
+        <div className="flex-1 bg-[#3d2e28] rounded-lg overflow-y-visible lg:overflow-hidden w-full max-w-full">
           <div className="h-full overflow-y-auto">
             {categories.length === 0 ? (
               <div className="flex items-center justify-center h-full text-[#F4EFEA]/40">

@@ -15,7 +15,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-[#1E1815] flex-col lg:flex-row overflow-x-hidden max-w-full">
+    <div className="flex min-h-screen h-auto lg:h-screen bg-[#1E1815] flex-col lg:flex-row overflow-x-hidden overflow-y-visible lg:overflow-y-hidden max-w-full">
       {/* MOBILE/TABLET: Header top cu tabs orizontale (< 1024px) */}
       <div className="flex lg:hidden flex-col bg-[#1E1815] border-b border-[#F4EFEA]/10 flex-shrink-0">
         {/* Logo și deconectare */}
@@ -103,7 +103,7 @@ export default function Dashboard() {
       </div>
 
       {/* Conținutul principal */}
-      <div className="flex-1 flex overflow-hidden max-w-full">
+      <div className="flex-1 flex overflow-y-visible lg:overflow-hidden max-w-full">
         {activeTab === 'weeks' ? <WeeksScreen /> : <CategoriesScreen />}
       </div>
     </div>

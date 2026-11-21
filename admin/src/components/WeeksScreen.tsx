@@ -257,7 +257,7 @@ export default function WeeksScreen() {
         />
       )}
 
-      <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] overflow-hidden flex-col lg:flex-row max-w-full">
+      <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] overflow-y-visible lg:overflow-hidden flex-col lg:flex-row max-w-full">
       {/* MOBILE/TABLET: Lista zilelor ca carduri compacte (< 1024px) */}
       <div className="flex lg:hidden flex-1 flex-col space-y-4 w-full max-w-full">
         {/* Header mobil cu selector și butoane */}
@@ -386,7 +386,7 @@ export default function WeeksScreen() {
         </div>
 
         {/* Tabel cu zilele */}
-        <div className="flex-1 bg-[#3d2e28] rounded-lg overflow-hidden flex flex-col">
+        <div className="flex-1 bg-[#3d2e28] rounded-lg overflow-y-visible lg:overflow-hidden flex flex-col">
           {/* Header tabel */}
           <div className="grid grid-cols-[140px_180px_1fr] items-center gap-4 px-5 py-3 bg-[#2A1F1C] border-b border-[#F4EFEA]/10">
             <div className="text-xs uppercase tracking-wider text-[#F4EFEA]/60 font-medium">

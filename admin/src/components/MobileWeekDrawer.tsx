@@ -45,9 +45,9 @@ export default function MobileWeekDrawer({
       )}
 
       {/* Full-screen drawer pentru mobile */}
-      <div className="fixed inset-0 bg-[#F4EFEA] z-50 flex flex-col overflow-hidden">
+      <div className="fixed inset-0 bg-[#F4EFEA] z-50 overflow-y-auto pb-24">
         {/* Header cu back button */}
-        <div className="bg-[#1E1815] px-4 py-3 flex items-center gap-3 border-b border-[#F4EFEA]/10">
+        <div className="bg-[#1E1815] px-4 py-3 flex items-center gap-3 border-b border-[#F4EFEA]/10 sticky top-0 z-10">
           <button
             onClick={onClose}
             className="text-[#F4EFEA] flex items-center gap-2 min-h-[44px]"
@@ -60,7 +60,7 @@ export default function MobileWeekDrawer({
         </div>
 
         {/* Content scrollable */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-5">
+        <div className="p-4 space-y-5">
           {/* Header zi */}
           <div>
             <h3 className="text-2xl text-[#1E1815] mb-1">
