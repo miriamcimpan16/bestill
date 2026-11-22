@@ -290,7 +290,7 @@ export default function CategoriesScreen() {
         />
       )}
 
-    <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] overflow-y-visible lg:overflow-hidden flex-col lg:flex-row max-w-full">
+    <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] overflow-y-visible lg:overflow-hidden flex-col lg:flex-row max-w-full lg:h-screen">
       {/* MOBILE/TABLET: Layout vertical (< 1024px) */}
       {/* DESKTOP: Layout orizontal (>= 1024px) */}
       
@@ -383,7 +383,7 @@ export default function CategoriesScreen() {
 
       {/* Panoul detalii categorie - DOAR DESKTOP (>= 1024px) */}
       {selectedCategory ? (
-        <div className="hidden lg:block w-full lg:w-[420px] bg-[#F4EFEA] rounded-lg p-4 lg:p-6 overflow-y-auto flex-shrink-0 mt-4 lg:mt-0 max-w-full">
+        <div className="hidden lg:block w-full lg:w-[420px] bg-[#F4EFEA] rounded-lg p-4 lg:p-6 overflow-y-auto flex-shrink-0 mt-4 lg:mt-0 max-w-full lg:h-full">
           <div className="flex items-start justify-between mb-1 w-full max-w-full">
             <h3 className="text-2xl text-[#1E1815] flex-1">
               {selectedCategory.title}
@@ -529,7 +529,7 @@ export default function CategoriesScreen() {
           </div>
         </div>
       ) : (
-        <div className="hidden lg:flex w-full lg:w-[420px] max-w-full bg-[#F4EFEA] rounded-lg p-6 items-center justify-center flex-shrink-0 mt-4 lg:mt-0">
+        <div className="hidden lg:flex w-full lg:w-[420px] max-w-full bg-[#F4EFEA] rounded-lg p-6 items-center justify-center flex-shrink-0 mt-4 lg:mt-0 lg:h-full">
           <div className="text-[#1E1815]/40 text-center">
             <p className="text-lg mb-2">Selectează o categorie</p>
             <p className="text-sm">sau creează una nouă</p>
