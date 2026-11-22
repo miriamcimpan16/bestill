@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { OpenWhenCategory } from '../types';
 import { categoryService } from '../services/categoryService';
 import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
-import { useIsMobile } from '../hooks/useMediaQuery';
+import { useIsMobile } from '../hooks/useIsMobile';
 import DeleteCategoryModal from './DeleteCategoryModal';
 import MobileCategoryDrawer from './MobileCategoryDrawer';
 

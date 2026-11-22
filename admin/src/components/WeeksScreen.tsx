@@ -3,7 +3,7 @@ import { Day, DayStatus } from '../types';
 import { weekService } from '../services/weekService';
 import { getMondayOfWeek, getSundayOfWeek, formatDateISO, generateWeekDays, formatDateRO } from '../utils/dateUtils';
 import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
-import { useIsMobile } from '../hooks/useMediaQuery';
+import { useIsMobile } from '../hooks/useIsMobile';
 import ResizablePanel from './ResizablePanel';
 import DevotionalEditor from './DevotionalEditor';
 import MobileWeekDrawer from './MobileWeekDrawer';
