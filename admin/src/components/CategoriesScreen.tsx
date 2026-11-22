@@ -4,6 +4,7 @@ import { categoryService } from '../services/categoryService';
 import { fetchBibleVerse, isValidReference } from '../utils/bibleLookup';
 import { useIsMobile } from '../hooks/useIsMobile';
 import DeleteCategoryModal from './DeleteCategoryModal';
+import AddCategoryModal from './AddCategoryModal';
 import MobileCategoryDrawer from './MobileCategoryDrawer';
 
 const DEFAULT_CATEGORIES = [
@@ -22,12 +23,12 @@ const DEFAULT_CATEGORIES = [
 export default function CategoriesScreen() {
   const [categories, setCategories] = useState<OpenWhenCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<OpenWhenCategory | null>(null);
-  const [newCategoryTitle, setNewCategoryTitle] = useState('');
   const [newVerseRef, setNewVerseRef] = useState('');
   const [newVerseText, setNewVerseText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [categoryToDelete, setCategoryToDelete] = useState<OpenWhenCategory | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [isLoadingVerse, setIsLoadingVerse] = useState(false);
   const [verseError, setVerseError] = useState<string | null>(null);
   const [verseSearchTimeout, setVerseSearchTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -88,23 +89,18 @@ export default function CategoriesScreen() {
     }
   };
 
-  const handleAddCategory = async () => {
-    if (!newCategoryTitle.trim()) {
-      setMessage('Te rog introdu un titlu pentru categorie');
-      return;
-    }
-
+  const handleAddCategory = async (title: string) => {
     setIsLoading(true);
+    setShowAddModal(false);
     try {
       const categoryId = `category_${Date.now()}`;
       await categoryService.saveCategory({
         id: categoryId,
-        title: newCategoryTitle,
+        title: title,
         verses: []
       });
 
       setMessage('Categorie adăugată cu succes!');
-      setNewCategoryTitle('');
       await loadCategories();
       
       setTimeout(() => setMessage(''), 3000);
@@ -271,6 +267,14 @@ export default function CategoriesScreen() {
         />
       )}
 
+      {/* Modal de adăugare categorie nouă */}
+      {showAddModal && (
+        <AddCategoryModal
+          onConfirm={handleAddCategory}
+          onCancel={() => setShowAddModal(false)}
+        />
+      )}
+
       {/* Mobile Drawer pentru editare categorie */}
       {isMobile && selectedCategory && (
         <MobileCategoryDrawer
@@ -290,7 +294,7 @@ export default function CategoriesScreen() {
         />
       )}
 
-    <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] overflow-y-visible lg:overflow-hidden flex-col lg:flex-row max-w-full lg:h-screen">
+    <div className="flex-1 flex gap-6 p-4 lg:p-6 bg-[#2A1F1C] flex-col lg:flex-row max-w-full h-full overflow-hidden">
       {/* MOBILE/TABLET: Layout vertical (< 1024px) */}
       {/* DESKTOP: Layout orizontal (>= 1024px) */}
       
@@ -309,13 +313,7 @@ export default function CategoriesScreen() {
             </div>
             
             <button
-              onClick={() => {
-                const title = prompt('Titlu categorie nouă (ex: "you feel like quitting"):');
-                if (title) {
-                  setNewCategoryTitle(title);
-                  setTimeout(() => handleAddCategory(), 0);
-                }
-              }}
+              onClick={() => setShowAddModal(true)}
               disabled={isLoading}
               className="w-full lg:w-auto min-h-[44px] px-6 py-2.5 bg-[#F4EFEA] text-[#1E1815] rounded hover:bg-[#F4EFEA]/90 active:bg-[#F4EFEA]/80 transition disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs font-medium"
             >
@@ -383,7 +381,7 @@ export default function CategoriesScreen() {
 
       {/* Panoul detalii categorie - DOAR DESKTOP (>= 1024px) */}
       {selectedCategory ? (
-        <div className="hidden lg:block w-full lg:w-[420px] bg-[#F4EFEA] rounded-lg p-4 lg:p-6 overflow-y-auto flex-shrink-0 mt-4 lg:mt-0 max-w-full lg:h-full">
+        <div className="hidden lg:block w-full lg:w-[420px] bg-[#F4EFEA] rounded-lg p-4 lg:p-6 flex-shrink-0 mt-4 lg:mt-0 max-w-full h-full overflow-y-auto">
           <div className="flex items-start justify-between mb-1 w-full max-w-full">
             <h3 className="text-2xl text-[#1E1815] flex-1">
               {selectedCategory.title}
@@ -529,7 +527,7 @@ export default function CategoriesScreen() {
           </div>
         </div>
       ) : (
-        <div className="hidden lg:flex w-full lg:w-[420px] max-w-full bg-[#F4EFEA] rounded-lg p-6 items-center justify-center flex-shrink-0 mt-4 lg:mt-0 lg:h-full">
+        <div className="hidden lg:flex w-full lg:w-[420px] max-w-full bg-[#F4EFEA] rounded-lg p-6 items-center justify-center flex-shrink-0 mt-4 lg:mt-0 h-full">
           <div className="text-[#1E1815]/40 text-center">
             <p className="text-lg mb-2">Selectează o categorie</p>
             <p className="text-sm">sau creează una nouă</p>
