@@ -332,9 +332,9 @@ export default function WeeksScreen() {
       </div>
 
       {/* DESKTOP: Layout original cu tabel și panel lateral (>= 1024px) */}
-      <div className="hidden lg:flex lg:flex-1 flex-col w-full max-w-full">
+      <div className="hidden lg:flex lg:flex-1 flex-col lg:flex-row lg:gap-6 lg:h-full lg:overflow-hidden w-full max-w-full">
       {/* Coloana centrală - Lista zilelor */}
-      <div className="flex-1 flex flex-col w-full max-w-full">
+      <div className="flex-1 min-w-0 flex flex-col lg:overflow-y-auto w-full max-w-full">
         {/* Header cu titlu și butoane - ALINIAT PE ACEEAȘI LINIE */}
         <div className="mb-6">
           <div className="flex items-center justify-between gap-4 mb-3">
@@ -435,6 +435,7 @@ export default function WeeksScreen() {
       </div>
 
       {/* Coloana dreaptă - Panel editare REDIMENSIONABIL */}
+      <div className="w-full lg:w-[420px] lg:shrink-0 lg:h-full lg:overflow-y-auto">
       <ResizablePanel minWidth={340} maxWidth={750} defaultWidth={460}>
         <h3 className="text-2xl text-[#1E1815] mb-1">
           {dayNames[selectedDayIndex]} · Ziua {selectedDayIndex + 1}
@@ -552,6 +553,7 @@ export default function WeeksScreen() {
           </div>
         </div>
       </ResizablePanel>
+      </div>
       </div>
       </div>
     </>
