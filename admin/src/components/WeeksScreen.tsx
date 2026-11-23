@@ -335,24 +335,20 @@ export default function WeeksScreen() {
       <div className="hidden lg:flex lg:flex-1 flex-col lg:flex-row lg:gap-6 lg:h-full lg:overflow-hidden w-full max-w-full">
       {/* Coloana centrală - Lista zilelor */}
       <div className="flex-1 min-w-0 flex flex-col lg:overflow-y-auto w-full max-w-full">
-        {/* Header cu titlu și butoane - ALINIAT PE ACEEAȘI LINIE */}
+        {/* Header cu selector și status */}
         <div className="mb-6">
+          {/* Linia 1: Selector de dată + Butoane */}
           <div className="flex items-center justify-between gap-4 mb-3">
-            {/* Titlu în stânga */}
-            <div className="flex-1">
-              <h2 className="text-3xl text-[#F4EFEA] leading-tight">
-                Săptămâna {mondayDay}–{sundayDay} {monthName}
-              </h2>
-            </div>
+            {/* Selector dată în stânga */}
+            <input
+              type="date"
+              value={formatDateISO(selectedMonday)}
+              onChange={handleWeekChange}
+              className="h-10 px-3 bg-[#3d2e28] text-[#F4EFEA] rounded border border-[#F4EFEA]/20 focus:outline-none focus:ring-2 focus:ring-[#7A5363] text-sm"
+            />
             
-            {/* Calendar + Butoane în dreapta - TOATE LA h-10 */}
+            {/* Butoane în dreapta */}
             <div className="flex items-center gap-3">
-              <input
-                type="date"
-                value={formatDateISO(selectedMonday)}
-                onChange={handleWeekChange}
-                className="h-10 px-3 bg-[#3d2e28] text-[#F4EFEA] rounded border border-[#F4EFEA]/20 focus:outline-none focus:ring-2 focus:ring-[#7A5363] text-sm"
-              />
               <button
                 onClick={() => handleSave('DRAFT')}
                 disabled={isSaving}
@@ -370,10 +366,15 @@ export default function WeeksScreen() {
             </div>
           </div>
 
-          {/* Status și mesaj pe linia a doua */}
+          {/* Linia 2: Titlu săptămână */}
+          <h2 className="text-3xl text-[#F4EFEA] leading-tight mb-3">
+            Săptămâna {mondayDay}–{sundayDay} {monthName}
+          </h2>
+
+          {/* Linia 3: Status și mesaj */}
           <div className="flex items-center gap-4">
             <p className="text-sm text-[#F4EFEA]/60">
-              {completedDays} zile completate din 7 · stare: {currentStatus === 'PUBLISHED' ? 'publicată' : 'ciornă'}
+              {completedDays} zile completate din 7 · stare: {currentStatus === 'PUBLISHED' ? 'ciornă' : 'ciornă'}
             </p>
             
             {/* Mesaj de salvare */}
