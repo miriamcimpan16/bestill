@@ -435,14 +435,17 @@ export default function WeeksScreen() {
       </div>
 
       {/* Coloana dreaptă - Panel editare REDIMENSIONABIL */}
-      <div className="w-full lg:w-[420px] lg:shrink-0 lg:h-full lg:overflow-y-auto">
+      <div className="w-full lg:w-[420px] lg:shrink-0 lg:h-full lg:overflow-hidden">
       <ResizablePanel minWidth={340} maxWidth={750} defaultWidth={460}>
-        <h3 className="text-2xl text-[#1E1815] mb-1">
-          {dayNames[selectedDayIndex]} · Ziua {selectedDayIndex + 1}
-        </h3>
-        <p className="text-xs uppercase tracking-wider text-[#1E1815]/50 mb-6">
-          {formatDateRO(days[selectedDayIndex]?.date || formatDateISO(selectedMonday))}
-        </p>
+        <div className="space-y-5">
+          <div>
+            <h3 className="text-2xl text-[#1E1815] mb-1">
+              {dayNames[selectedDayIndex]} · Ziua {selectedDayIndex + 1}
+            </h3>
+            <p className="text-xs uppercase tracking-wider text-[#1E1815]/50">
+              {formatDateRO(days[selectedDayIndex]?.date || formatDateISO(selectedMonday))}
+            </p>
+          </div>
         
         <div className="space-y-5">
           <div>
@@ -514,7 +517,7 @@ export default function WeeksScreen() {
               </label>
               <button
                 onClick={() => setIsEditorOpen(true)}
-                className="text-[#7A5363] hover:text-[#1E1815] transition flex items-center gap-1 text-xs"
+                className="px-3 py-1.5 bg-[#1E1815] text-[#F4EFEA] hover:bg-[#2A1F1C] transition rounded flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider"
                 title="Scrie pe ecran mare"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -527,12 +530,12 @@ export default function WeeksScreen() {
               value={stripHtml(days[selectedDayIndex]?.content || '')}
               onChange={(e) => handleDayChange(selectedDayIndex, 'content', e.target.value)}
               placeholder="Un păstor își cunoaște oile pe nume și știe de ce are nevoie fiecare."
-              rows={8}
-              className="w-full min-h-[200px] px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-y leading-relaxed"
+              rows={6}
+              className="w-full min-h-[160px] px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-y leading-relaxed"
               readOnly
               title="Click pe 'Extinde' pentru a edita conținutul"
             />
-            <div className="flex justify-end mt-1">
+            <div className="flex justify-end mt-2">
               <p className="text-xs text-[#1E1815]/50">
                 {devotionalWordCount} cuvinte · ~{devotionalReadingTime} min de citit
               </p>
@@ -547,10 +550,11 @@ export default function WeeksScreen() {
               value={days[selectedDayIndex]?.reflectionQuestion || ''}
               onChange={(e) => handleDayChange(selectedDayIndex, 'reflectionQuestion', e.target.value)}
               placeholder="Unde ai simțit grija lui Dumnezeu săptămâna aceasta?"
-              rows={3}
+              rows={2}
               className="w-full px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-none"
             />
           </div>
+        </div>
         </div>
       </ResizablePanel>
       </div>

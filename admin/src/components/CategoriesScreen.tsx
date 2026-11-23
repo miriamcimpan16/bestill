@@ -381,149 +381,151 @@ export default function CategoriesScreen() {
 
       {/* Panoul detalii categorie - DOAR DESKTOP (>= 1024px) */}
       {selectedCategory ? (
-        <div className="hidden lg:block w-full lg:w-[420px] bg-[#F4EFEA] rounded-lg p-4 lg:p-6 flex-shrink-0 mt-4 lg:mt-0 max-w-full h-full overflow-y-auto">
-          <div className="flex items-start justify-between mb-1 w-full max-w-full">
-            <h3 className="text-2xl text-[#1E1815] flex-1">
-              {selectedCategory.title}
-            </h3>
-            <button
-              onClick={() => handleDeleteCategory(selectedCategory)}
-              disabled={isLoading}
-              className="text-red-600 hover:text-red-700 transition disabled:opacity-50 p-1"
-              title="Șterge categoria"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
-          <p className="text-xs uppercase tracking-wider text-[#1E1815]/50 mb-6">
-            Titlul categoriei
-          </p>
+        <div className="hidden lg:block w-full lg:w-[420px] bg-[#F4EFEA] rounded-lg flex-shrink-0 mt-4 lg:mt-0 max-w-full h-full overflow-hidden">
+          <div className="h-full overflow-y-auto p-4 lg:p-6 custom-scrollbar">
+            <div className="flex items-start justify-between mb-1 w-full max-w-full">
+              <h3 className="text-2xl text-[#1E1815] flex-1">
+                {selectedCategory.title}
+              </h3>
+              <button
+                onClick={() => handleDeleteCategory(selectedCategory)}
+                disabled={isLoading}
+                className="text-red-600 hover:text-red-700 transition disabled:opacity-50 p-1"
+                title="Șterge categoria"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <p className="text-xs uppercase tracking-wider text-[#1E1815]/50 mb-6">
+              Titlul categoriei
+            </p>
 
-          <div className="mb-6">
-            <input
-              type="text"
-              value={selectedCategory.title}
-              onChange={async (e) => {
-                const newTitle = e.target.value;
-                setSelectedCategory({ ...selectedCategory, title: newTitle });
-                
-                // Salvează automat cu debounce
-                clearTimeout((window as any).categoryTitleTimeout);
-                (window as any).categoryTitleTimeout = setTimeout(async () => {
-                  await categoryService.saveCategory({
-                    id: selectedCategory.id,
-                    title: newTitle,
-                    verses: []
-                  });
-                  await loadCategories();
-                }, 500);
-              }}
-              placeholder="Open when you feel like quitting"
-              className="w-full px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent"
-            />
-          </div>
+            <div className="mb-6">
+              <input
+                type="text"
+                value={selectedCategory.title}
+                onChange={async (e) => {
+                  const newTitle = e.target.value;
+                  setSelectedCategory({ ...selectedCategory, title: newTitle });
+                  
+                  // Salvează automat cu debounce
+                  clearTimeout((window as any).categoryTitleTimeout);
+                  (window as any).categoryTitleTimeout = setTimeout(async () => {
+                    await categoryService.saveCategory({
+                      id: selectedCategory.id,
+                      title: newTitle,
+                      verses: []
+                    });
+                    await loadCategories();
+                  }, 500);
+                }}
+                placeholder="Open when you feel like quitting"
+                className="w-full px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent"
+              />
+            </div>
 
-          <div className="mb-6">
-            <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 mb-3 font-medium">
-              Versete în categorie
-            </label>
-            
-            <div className="space-y-3 mb-4 max-h-[280px] overflow-y-auto">
-              {selectedCategory.verses.length === 0 ? (
-                <div className="text-[#1E1815]/40 text-sm text-center py-8 border border-dashed border-[#1E1815]/20 rounded">
-                  Niciun verset adăugat încă
-                </div>
-              ) : (
-                selectedCategory.verses.map((verse) => (
-                  <div 
-                    key={verse.id}
-                    className="bg-white border border-[#1E1815]/20 rounded p-3 relative group hover:border-[#7A5363]/30 transition"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-[#1E1815] text-sm mb-1">
-                          {verse.verseReference}
-                        </div>
-                        <div className="text-[#1E1815]/70 text-sm line-clamp-2">
-                          {verse.verseText}
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handleDeleteVerse(verse.id)}
-                        disabled={isLoading}
-                        className="opacity-0 group-hover:opacity-100 transition flex-shrink-0 text-red-600 hover:text-red-700 disabled:opacity-50"
-                        title="Șterge"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
+            <div className="mb-6">
+              <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 mb-3 font-medium">
+                Versete în categorie
+              </label>
+              
+              <div className="space-y-3 mb-4 max-h-[280px] overflow-y-auto">
+                {selectedCategory.verses.length === 0 ? (
+                  <div className="text-[#1E1815]/40 text-sm text-center py-8 border border-dashed border-[#1E1815]/20 rounded">
+                    Niciun verset adăugat încă
                   </div>
-                ))
-              )}
+                ) : (
+                  selectedCategory.verses.map((verse) => (
+                    <div 
+                      key={verse.id}
+                      className="bg-white border border-[#1E1815]/20 rounded p-3 relative group hover:border-[#7A5363]/30 transition"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-[#1E1815] text-sm mb-1">
+                            {verse.verseReference}
+                          </div>
+                          <div className="text-[#1E1815]/70 text-sm line-clamp-2">
+                            {verse.verseText}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteVerse(verse.id)}
+                          disabled={isLoading}
+                          className="opacity-0 group-hover:opacity-100 transition flex-shrink-0 text-red-600 hover:text-red-700 disabled:opacity-50"
+                          title="Șterge"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="border-t border-[#1E1815]/20 pt-6">
-            <div className="flex items-center justify-between mb-3">
-              <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
-                Verset nou · Referință
-              </label>
-              {isLoadingVerse && (
-                <span className="text-xs text-[#7A5363] flex items-center gap-1">
-                  <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                  </svg>
-                  Caut versetul...
-                </span>
-              )}
+            <div className="border-t border-[#1E1815]/20 pt-6">
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
+                  Verset nou · Referință
+                </label>
+                {isLoadingVerse && (
+                  <span className="text-xs text-[#7A5363] flex items-center gap-1">
+                    <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                    </svg>
+                    Caut versetul...
+                  </span>
+                )}
+              </div>
+              <input
+                type="text"
+                value={newVerseRef}
+                onChange={(e) => {
+                  setNewVerseRef(e.target.value);
+                  // Apelează handleVerseLookup mereu - funcția va verifica validitatea
+                  handleVerseLookup(e.target.value);
+                }}
+                placeholder="de ex. Isaia 40:31"
+                className="w-full px-4 py-2.5 mb-4 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent"
+              />
+
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
+                  Textul versetului
+                </label>
+                {verseError && (
+                  <span className="text-xs text-[#1E1815]/60">
+                    {verseError}
+                  </span>
+                )}
+                {!verseError && !isLoadingVerse && newVerseText && newVerseRef && (
+                  <span className="text-xs text-green-600">
+                    ✓ Verset preluat automat
+                  </span>
+                )}
+              </div>
+              <textarea
+                value={newVerseText}
+                onChange={(e) => setNewVerseText(e.target.value)}
+                placeholder="Textul versetului..."
+                rows={4}
+                className="w-full px-4 py-2.5 mb-4 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-none"
+              />
+
+              <button
+                onClick={handleAddVerse}
+                disabled={isLoading || !newVerseRef.trim() || !newVerseText.trim()}
+                className="w-full min-h-[44px] py-3 bg-[#1E1815] text-[#F4EFEA] rounded hover:bg-[#2A1F1C] active:bg-[#2A1F1C] transition disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs font-medium"
+              >
+                Adaugă versetul
+              </button>
             </div>
-            <input
-              type="text"
-              value={newVerseRef}
-              onChange={(e) => {
-                setNewVerseRef(e.target.value);
-                // Apelează handleVerseLookup mereu - funcția va verifica validitatea
-                handleVerseLookup(e.target.value);
-              }}
-              placeholder="de ex. Isaia 40:31"
-              className="w-full px-4 py-2.5 mb-4 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent"
-            />
-
-            <div className="flex items-center justify-between mb-3">
-              <label className="block text-xs uppercase tracking-wider text-[#1E1815]/60 font-medium">
-                Textul versetului
-              </label>
-              {verseError && (
-                <span className="text-xs text-[#1E1815]/60">
-                  {verseError}
-                </span>
-              )}
-              {!verseError && !isLoadingVerse && newVerseText && newVerseRef && (
-                <span className="text-xs text-green-600">
-                  ✓ Verset preluat automat
-                </span>
-              )}
-            </div>
-            <textarea
-              value={newVerseText}
-              onChange={(e) => setNewVerseText(e.target.value)}
-              placeholder="Textul versetului..."
-              rows={4}
-              className="w-full px-4 py-2.5 mb-4 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-none"
-            />
-
-            <button
-              onClick={handleAddVerse}
-              disabled={isLoading || !newVerseRef.trim() || !newVerseText.trim()}
-              className="w-full min-h-[44px] py-3 bg-[#1E1815] text-[#F4EFEA] rounded hover:bg-[#2A1F1C] active:bg-[#2A1F1C] transition disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider text-xs font-medium"
-            >
-              Adaugă versetul
-            </button>
           </div>
         </div>
       ) : (
