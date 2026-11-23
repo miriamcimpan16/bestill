@@ -51,7 +51,7 @@ export default function ResizablePanel({
   return (
     <div 
       ref={panelRef}
-      className="relative bg-[#F4EFEA] rounded-lg flex-shrink-0"
+      className="relative bg-[#F4EFEA] rounded-lg flex-shrink-0 h-screen overflow-hidden"
       style={{ width: `${width}px` }}
     >
       {/* Mâner invizibil de redimensionare pe marginea stângă */}
@@ -61,9 +61,9 @@ export default function ResizablePanel({
         title="Trage pentru a redimensiona"
       />
 
-      {/* Conținut */}
-      <div className="h-full overflow-hidden">
-        <div className="h-full overflow-y-auto p-6 custom-scrollbar">
+      {/* Conținut cu scroll */}
+      <div className="h-full overflow-y-auto custom-scrollbar">
+        <div className="p-6">
           {children}
         </div>
       </div>

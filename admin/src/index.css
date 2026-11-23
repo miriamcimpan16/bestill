@@ -8,6 +8,13 @@
   box-sizing: border-box;
 }
 
+/* Asigură box-sizing pentru toate elementele */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* IMPORTANT: Elimină overflow orizontal pe toate dispozitivele */
 html,
 body {

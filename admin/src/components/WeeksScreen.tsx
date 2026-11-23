@@ -436,8 +436,8 @@ export default function WeeksScreen() {
       </div>
 
       {/* Coloana dreaptă - Panel editare REDIMENSIONABIL */}
-      <div className="w-full lg:w-[420px] lg:shrink-0 lg:h-full lg:overflow-hidden">
-      <ResizablePanel minWidth={340} maxWidth={750} defaultWidth={460}>
+      <div className="w-full lg:w-[460px] lg:shrink-0 lg:h-screen lg:overflow-hidden">
+      <ResizablePanel minWidth={380} maxWidth={700} defaultWidth={460}>
         <div className="space-y-5">
           <div>
             <h3 className="text-2xl text-[#1E1815] mb-1">
@@ -469,7 +469,7 @@ export default function WeeksScreen() {
               value={days[selectedDayIndex]?.verseReference || ''}
               onChange={(e) => handleDayChange(selectedDayIndex, 'verseReference', e.target.value)}
               placeholder="Psalmul 23:1"
-              className="w-full px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent"
+              className="w-full box-border px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent"
             />
           </div>
 
@@ -494,7 +494,7 @@ export default function WeeksScreen() {
               onChange={(e) => handleDayChange(selectedDayIndex, 'verseText', e.target.value)}
               placeholder="Domnul este Păstorul meu: nu voi duce lipsă de nimic."
               rows={3}
-              className="w-full px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-none"
+              className="w-full box-border px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-none"
             />
           </div>
 
@@ -507,7 +507,7 @@ export default function WeeksScreen() {
               value={days[selectedDayIndex]?.title || ''}
               onChange={(e) => handleDayChange(selectedDayIndex, 'title', e.target.value)}
               placeholder="Nimic nu-ți lipsește"
-              className="w-full px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent"
+              className="w-full box-border px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent"
             />
           </div>
 
@@ -518,7 +518,7 @@ export default function WeeksScreen() {
               </label>
               <button
                 onClick={() => setIsEditorOpen(true)}
-                className="px-3 py-1.5 bg-[#1E1815] text-[#F4EFEA] hover:bg-[#2A1F1C] transition rounded flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider"
+                className="text-[#7A5363] hover:text-[#1E1815] transition flex items-center gap-1.5 text-xs"
                 title="Scrie pe ecran mare"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -532,7 +532,7 @@ export default function WeeksScreen() {
               onChange={(e) => handleDayChange(selectedDayIndex, 'content', e.target.value)}
               placeholder="Un păstor își cunoaște oile pe nume și știe de ce are nevoie fiecare."
               rows={6}
-              className="w-full min-h-[160px] px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-y leading-relaxed"
+              className="w-full box-border min-h-[160px] px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-y leading-relaxed"
               readOnly
               title="Click pe 'Extinde' pentru a edita conținutul"
             />
@@ -552,7 +552,7 @@ export default function WeeksScreen() {
               onChange={(e) => handleDayChange(selectedDayIndex, 'reflectionQuestion', e.target.value)}
               placeholder="Unde ai simțit grija lui Dumnezeu săptămâna aceasta?"
               rows={2}
-              className="w-full px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-none"
+              className="w-full box-border px-4 py-2.5 border border-[#1E1815]/20 rounded bg-white text-[#1E1815] placeholder:text-[#1E1815]/40 focus:outline-none focus:ring-2 focus:ring-[#7A5363] focus:border-transparent resize-none"
             />
           </div>
         </div>

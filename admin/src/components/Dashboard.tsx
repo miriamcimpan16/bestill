@@ -61,7 +61,7 @@ export default function Dashboard() {
       <div className="hidden lg:flex w-[220px] bg-[#1E1815] flex-col border-r border-[#F4EFEA]/10 flex-shrink-0">
         <div className="px-6 pt-8 pb-6 border-b border-[#F4EFEA]/10">
           <h1 className="text-4xl text-[#F4EFEA] mb-2" style={{ fontFamily: '"MonteCarlo", cursive', fontWeight: 500 }}>
-            Devoțional
+            Be Still
           </h1>
           <p className="text-xs text-[#F4EFEA]/60 uppercase tracking-wider">
             Administrare
